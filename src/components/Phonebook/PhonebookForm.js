@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import css from './Phonebook.module.css';
@@ -8,62 +8,60 @@ const INITIAL_STATE = {
   number: '',
 };
 
-class PhonebookForm extends React.Component {
-  state = { ...INITIAL_STATE };
+const PhonebookForm = ({ onSubmit }) => {
+  const [formData, setFormData] = useState({ ...INITIAL_STATE });
 
-  handleChange = evt => {
-    const { name, value } = evt.target;
-    this.setState({ [name]: value });
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({ ...prevState, [name]: value }));
   };
 
-  handleSubmit = evt => {
-    evt.preventDefault();
-    const { name, number } = this.state;
+  const handleSubmit = e => {
+    e.preventDefault();
+    const { name, number } = formData;
     const contact = { id: nanoid(), name, number };
-    this.props.onSubmit(contact);
-    this.reset();
+    onSubmit(contact);
+    reset();
   };
 
-  reset = () => {
-    this.setState({ ...INITIAL_STATE });
+  const reset = () => {
+    setFormData({ ...INITIAL_STATE });
   };
 
-  render() {
-    const { name, number } = this.state;
+  const { name, number } = formData;
 
-    return (
-      <form onSubmit={this.handleSubmit} className={css.Form}>
-        <label className={css.Label}>
-          Name
-          <input
-            type="text"
-            placeholder="Enter name"
-            name="name"
-            value={name}
-            onChange={this.handleChange}
-            className={css.Input}
-          />
-        </label>
-        <label className={css.Label}>
-          Number
-          <input
-            type="tel"
-            name="number"
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-            required
-            value={number}
-            onChange={this.handleChange}
-            className={css.Input}
-          />
-        </label>
-        <button type="submit" className={css.Btn}>
-          Add contact
-        </button>
-      </form>
-    );
-  }
-}
+  return (
+    <form onSubmit={handleSubmit} className={css.Form}>
+      <label className={css.Label}>
+        Name
+        <input
+          type="text"
+          placeholder="Enter name"
+          name="name"
+          value={name}
+          onChange={handleChange}
+          className={css.Input}
+        />
+      </label>
+      <label className={css.Label}>
+        Number
+        <input
+          type="tel"
+          name="number"
+          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+          title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+          required
+          value={number}
+          onChange={handleChange}
+          className={css.Input}
+        />
+      </label>
+      <button type="submit" className={css.Btn}>
+        Add contact
+      </button>
+    </form>
+  );
+};
 
 PhonebookForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
