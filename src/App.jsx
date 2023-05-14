@@ -1,22 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import PhonebookForm from './components/Phonebook/PhonebookForm';
 import Section from './components/Phonebook/Section';
 import ContactList from './components/Phonebook/ContactList';
 import Filter from './components/Phonebook/Filter';
+import useLocalStorage from './services/useLocalStorage';
 
 const LS_KEY = 'phonebook_contacts';
 
 const App = () => {
-  const [contacts, setContacts] = useState(() => {
-    const savedContacts = localStorage.getItem(LS_KEY);
-    return savedContacts ? JSON.parse(savedContacts) : [];
-  });
+  const [contacts, setContacts] = useLocalStorage(LS_KEY, []);
   const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    localStorage.setItem(LS_KEY, JSON.stringify(contacts));
-  }, [contacts]);
 
   const addContact = contact => {
     const existingContact = contacts.find(
@@ -29,8 +23,10 @@ const App = () => {
     setContacts(prevContacts => [...prevContacts, contact]);
   };
   const deleteContact = contactId => {
-    const newContacts = contacts.filter(contact => contact.id !== contactId);
-    setContacts(newContacts);
+    setContacts(prevState => {
+      const newContacts = prevState.filter(contact => contact.id !== contactId);
+      return newContacts;
+    });
   };
 
   const handleFilterChange = e => {
