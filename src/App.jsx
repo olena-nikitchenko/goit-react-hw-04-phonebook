@@ -4,7 +4,7 @@ import PhonebookForm from './components/Phonebook/PhonebookForm';
 import Section from './components/Phonebook/Section';
 import ContactList from './components/Phonebook/ContactList';
 import Filter from './components/Phonebook/Filter';
-import useLocalStorage from './services/useLocalStorage';
+import useLocalStorage from './hooks/useLocalStorage';
 
 const LS_KEY = 'phonebook_contacts';
 
@@ -24,8 +24,7 @@ const App = () => {
   };
   const deleteContact = contactId => {
     setContacts(prevState => {
-      const newContacts = prevState.filter(contact => contact.id !== contactId);
-      return newContacts;
+      return prevState.filter(contact => contact.id !== contactId);
     });
   };
 
